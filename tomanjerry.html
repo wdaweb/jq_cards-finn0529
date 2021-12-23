@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css' />
+    <title>Document</title>
+    <style>
+      *{
+        
+        box-sizing: border-box;
+      }
+      body,html{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      #game{
+        width: 800px;
+        height: 650px;
+        background: url(./image/01181dea324541d035d37f911bde10cd.jpg) no-repeat center center/cover;
+      }
+
+      #top{
+        width: 100%;
+        height: 70%;
+        position: relative;
+        
+      }
+      #cards{
+        height: 100%;
+        width: 90%;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%,-50%);
+
+      }
+
+      #down{
+        width: 100%;
+        height: 30%;
+        position: relative;
+      }
+
+      #line{
+        position: absolute;
+        width: 90%;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%,-50%);
+        display: none;
+      }
+
+      #tom{
+      
+        height: 130px;
+        position: absolute;
+        right: -5%;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1;
+      }
+      #jerry{
+        
+        height: 50px;
+        position: absolute;
+        right: 35%;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1;
+      }
+
+      .cheese{
+        height: 150px;
+        position: absolute;
+        left: -5%;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      .card {
+        width: 120px;
+        height: 180px;
+        position: relative;
+        /* 設定子元素在 3D 空間內 */
+        transform-style: preserve-3d;
+        float: left;
+        margin: 10px;
+        transition: transform 1s;
+      }
+  
+      .card-front {
+        width: 100%;
+        height: 100%;
+        background-image: url(./image/1.png);
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        position: absolute;
+        /* 把花色翻轉到下面 */
+        transform: rotateY(180deg);
+        /* 翻過來後隱藏另一面 */
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+      }
+  
+      .card-back {
+        width: 100%;
+        height: 100%;
+        background-image: url(./image/back.png);
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        position: absolute;
+        /* 翻過來後隱藏另一面 */
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+      }
+
+      .card-ok{
+        pointer-events: none;
+      }
+  
+      .card-open {
+        transform: rotateY(180deg);
+      }
+
+      #start{
+        height: 200px;
+        width: 200px;
+        position: absolute;
+        left: 42%;
+        top: 45%;
+        
+      }
+
+      #btn-start{
+        height: 150px;
+        position: absolute;
+        bottom: -10%;
+        left: 50%;
+        transform: translateX(-50%)
+        
+      }
+      #btn-start:hover{
+        cursor: pointer;
+        transform: translate(-48%,2%);
+        z-index: 99;
+      }
+
+      .logo{
+        position: absolute;
+        width: 600px;
+        top: 0;
+        left: 75%;
+        transform: translate(-50%,-50%)
+      }
+    </style>
+</head>
+<body>
+  
+    <div id="game">
+
+        
+
+        <div id="top">
+          <div id="cards"></div>
+        </div>
+        <div id="down">
+            <div id="line">
+                <img src="./image/jerry.gif" alt="" id="jerry">
+                <img src="./image/tom.gif" alt="" id="tom">
+                <img src="./image/cheese-01.png" alt="" class="cheese">
+            </div>
+        </div>
+    </div>
+    <div id="start" class="wow animate__bounceIn">
+      <img src="./image/PikPng.com_tom-and-jerry-png_924910.png" alt="" class="logo">
+      <img src="./image/start-01.png" alt="" id="btn-start">
+    </div>
+
+    <script src="./jquery-3.6.0.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="./js/wow.js"></script>
+    <script>
+      var wow = new WOW(
+        {
+          boxClass: 'wow',      // default
+          animateClass: 'animate__animated',
+          offset: 0,          // default
+          mobile: true,       // default
+          live: true        // default
+        }
+      )
+      wow.init();
+    </script>
+    <script>
+      
+    
+    // 翻牌
+    $('#cards').on('click', '.card', function () {
+      // 最多只能翻兩張牌，且這張牌還沒翻開
+      if ($('.card-open').length < 2 && !$(this).hasClass('card-open')) {
+        $(this).addClass('card-open')
+      }
+
+      // 如果翻開兩張了
+      if ($('.card-open').length === 2) {
+        // 如果兩張數字一樣
+        if ($('.card-open').eq(0).attr('data-card') === $('.card-open').eq(1).attr('data-card')) {
+          // 使用 card-ok 標記已完成並淡出
+          $('.card-open').addClass('card-ok')
+          // 將 card-front 淡出而不是 .card，因為對 card 淡出會把 3d 壓平
+          $('.card-open .card-front').fadeTo(1000, 0)
+
+          $('#tom').animate({right:'-=30'})
+
+        }else{
+          $('#jerry').animate({right:'-=10'})
+        }
+
+        // 不管一不一樣都翻回來
+        setTimeout(() => {
+          const jerryPos = $('#jerry').offset().left-$(window).width()/2
+          // 如果 .card-open 裡的 card-front 透明度不是 1，把 .card-open 透明度設為 0
+          // .each() 類似 for of，裡面的 $(this) 代表迴圈正在跑的元素
+          $('.card-open').each(function () {
+            if ($(this).find('.card-front').css('opacity') != 1) {
+              $(this).css('opacity', 0)
+            }
+          })
+
+          $('.card-open').removeClass('card-open')
+          
+          
+        }, 1000)
+      }
+    })
+
+    const start = () => {
+      $('#start').css('display','none')
+      $('#line').css('display','block')
+    }
+
+    const end = () => {
+      $('#start').css('display','block')
+      $('#line').css('display','none')
+    }
+
+    $('#btn-start').click(function(){
+
+      $('#tom').css({right:'-5%'})
+      $('#jerry').css({right:'35%'})
+      start()
+
+      timer=setInterval(function(){
+        const tomPos = $('#tom').offset().left-$(window).width()/2
+        const jerryPos = $('#jerry').offset().left-$(window).width()/2
+        $('#tom').animate({right:'+=25'})
+        $('#jerry').animate({right:'+=15'})
+        console.log(tomPos,jerryPos)
+
+        if ($('.card-ok').length === 10 ||jerryPos<-225 ) {
+            Swal.fire({
+              imageUrl: './image/213-2137484_jerry-the-mouse-with-cheese-hd-png-download.png',
+              imageHeight:200,
+              title: '恭喜過關'
+            })
+            end()
+            $('#cards').html("")
+            clearInterval(timer)
+          }
+
+        if(tomPos<jerryPos+45){
+            Swal.fire({
+              imageUrl: './image/tom-and-jerry-4852-4954-hd-wallpapers.png',
+              imageHeight:200,
+              title: '被抓到了'
+            })
+            end()
+            $('#cards').html("")
+            clearInterval(timer)
+            }
+      },1000)
+       // 產生卡片
+      for (let i = 0; i < 10; i++) {
+      $('#cards').append(`
+        <div class="card">
+          <div class="card-front"></div>
+          <div class="card-back"></div>
+        </div>
+      `)
+    }
+    // 決定數字並打散
+    for (let i = 0; i < 10; i++) {
+      // 決定數字
+      const num = i % 5 + 1
+      $('.card').eq(i).find('.card-front').css('background-image', `url(./image/${num}.png)`)
+      $('.card').eq(i).attr('data-card', num)
+
+      // 打散
+      const target = Math.round(Math.random() * 9)
+      $('.card').eq(target).insertAfter($('.card').eq(i))
+    }
+
+    
+
+    })
+    </script>
+</body>
+</html>
